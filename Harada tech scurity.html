@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HARADA_EXPLOIT_V3</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 0;
+            padding: 15px;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
+        #console {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .log-container {
+            flex: 1;
+            overflow: hidden;
+            border: 1px solid #004400;
+            padding: 10px;
+            background: rgba(0, 20, 0, 0.9);
+            box-shadow: inset 0 0 20px #003300;
+        }
+        .line { margin-bottom: 4px; border-left: 3px solid #00ff00; padding-left: 8px; }
+        .info { color: #00ccff; }
+        .warn { color: #ffff00; animation: blink 0.5s infinite; }
+        .crit { color: #ff0000; font-weight: bold; }
+        .done { color: #00ff00; font-weight: bold; }
+        
+        #progress-bar {
+            width: 0%; height: 15px; background: #00ff00;
+            margin: 10px 0; box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .binary-overlay {
+            position: fixed; top: 0; right: 0; width: 100px;
+            font-size: 10px; color: #004400; opacity: 0.5;
+            pointer-events: none; text-align: right;
+        }
+
+        @keyframes blink { 0% {opacity: 1;} 50% {opacity: 0;} 100% {opacity: 1;} }
+        .decoding { font-family: monospace; color: #00ff00; }
+    </style>
+</head>
+<body>
+
+<div class="binary-overlay" id="bin-stream"></div>
+
+<div id="console">
+    <div style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #0f0;">
+        [ HARADA CYBERNETICS - KERNEL EXPLOIT V3.1 ]<br>
+        SECURE_CONNECTION: AES-256 ENCRYPTED
+    </div>
+    
+    <div class="log-container" id="logs"></div>
+    
+    <div style="margin-top: 10px;">
+        <div id="status-text">SYSTEM STATUS: ANALYZING...</div>
+        <div id="progress-bar"></div>
+    </div>
+</div>
+
+<script>
+    const logs = [
+        {t: "BOOTING HARADA_EXPLOIT CORE...", s: "info"},
+        {t: "SCANNING NETWORK RANGE: 10.22.41.0/24", s: "info"},
+        {t: "[!] VULNERABILITY FOUND AT 10.22.41.115", s: "warn"},
+        {t: "INJECTING SQL_MAP_PAYLOAD...", s: "info"},
+        {t: "BYPASSING SSL HANDSHAKE... DONE.", s: "done"},
+        {t: "CRACKING RSA_PRIVATE_KEY [4096-BIT]", s: "info"},
+        {t: "0x8821: AE FF 21 00 12 CC BA 09", s: "decoding"},
+        {t: "0x8829: 11 BB 44 22 99 00 11 FF", s: "decoding"},
+        {t: "ENCRYPTED VOLUMES DETECTED.", s: "warn"},
+        {t: "RUNNING BRUTEFORCE ON /ETC/SHADOW...", s: "info"},
+        {t: "USER: ADMIN | PASS: ******** [FAILED]", s: "crit"},
+        {t: "USER: ROOT   | PASS: ******** [SUCCESS]", s: "done"},
+        {t: "ELEVATING PRIVILEGES TO ROOT...", s: "info"},
+        {t: "ACCESS GRANTED. UID: 0 (ROOT)", s: "done"},
+        {t: "OPENING SECURE SHELL... PORT 2211", s: "info"},
+        {t: "DATABASE: PAYROLL_MASTER_DB FOUND.", s: "warn"},
+        {t: "EXTRACTING TABLE: SALARY_RECORDS...", s: "info"},
+        {t: "DUMPING 5.2 GB OF DATA TO HIDDEN_SRV", s: "info"},
+        {t: "PACKET_1: [###############] 100%", s: "done"},
+        {t: "PACKET_2: [###############] 100%", s: "done"},
+        {t: "PACKET_3: [###############] 100%", s: "done"},
+        {t: "DELETING TRACES IN /VAR/LOG/AUTH...", s: "info"},
+        {t: "INSTALLING ROOTKIT: .harada_v3_backdoor", s: "warn"},
+        {t: "SYSTEM COMPROMISED. PERSISTENCE ACTIVE.", s: "done"},
+        {t: "LOGGING OUT... GOODBYE ADMIN.", s: "crit"}
+    ];
+
+    const logContainer = document.getElementById('logs');
+    const progressBar = document.getElementById('progress-bar');
+    const statusText = document.getElementById('status-text');
+    const binStream = document.getElementById('bin-stream');
+
+    let i = 0;
+    let progress = 0;
+
+    // Animasi Binary Stream neng pojokan
+    setInterval(() => {
+        let bin = "";
+        for(let j=0; j<20; j++) bin += Math.round(Math.random()) + "<br>";
+        binStream.innerHTML = bin;
+    }, 100);
+
+    function addLog() {
+        if (i < logs.length) {
+            const line = document.createElement('div');
+            line.className = 'line ' + logs[i].s;
+            line.innerHTML = `<span style="color:#888">[${new Date().toLocaleTimeString()}]</span> ${logs[i].t}`;
+            logContainer.appendChild(line);
+            
+            // Auto scroll menduwur
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Update Progress Bar
+            progress += (100 / logs.length);
+            progressBar.style.width = progress + "%";
+            statusText.innerText = "TASK: " + logs[i].t;
+
+            i++;
+            
+            // Delay random bèn ketok nyata
+            let delay = Math.random() * 800 + 400;
+            if (logs[i-1].s === "decoding") delay = 100; // Nek lagi crack kode dadi cepet
+            
+            setTimeout(addLog, delay);
+        } else {
+            // Reset sisan loop bèn aplikasi ora mandeg
+            setTimeout(() => {
+                logContainer.innerHTML = "";
+                i = 0;
+                progress = 0;
+                addLog();
+            }, 5000);
+        }
+    }
+
+    addLog();
+</script>
+
+</body>
+</html>
