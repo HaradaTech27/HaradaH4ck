@@ -203,22 +203,14 @@
     <div class="section">
         <label>Unit Stby :</label>
         <div id="stby-list">
-            <div class="unit-row">
-                <input type="text" class="stby-item" placeholder="Unit (Misal DT5678)" onkeydown="checkEnter(event, 'stby')">
-                <input type="text" class="stby-ket" placeholder="Ket">
             </div>
-        </div>
         <button class="btn-add" onclick="addUnitInput('stby')">+ Tambah Unit</button>
     </div>
 
     <div class="section">
         <label>Unit Breakdown :</label>
         <div id="bd-list">
-            <div class="unit-row">
-                <input type="text" class="bd-unit" placeholder="Unit (Misal HD 4551)">
-                <input type="text" class="bd-loc" placeholder="Pit">
             </div>
-        </div>
         <button class="btn-add" onclick="addUnitInput('bd')">+ Tambah Unit</button>
     </div>
 
@@ -271,11 +263,7 @@
                         <button class="btn-mini" onclick="addHaulerInput(${i})">+</button>
                     </div>
                     <div id="hauler-list-${i}" class="hauler-list">
-                        <div class="hauler-item">
-                            <span>DT</span>
-                            <input type="text" class="haul-val-${i}" placeholder="nomer DT">
                         </div>
-                    </div>
                 </div>
 
                 <div style="margin-top:10px">
@@ -291,13 +279,14 @@
         updateRitasiHours();
     }
 
-    function addHaulerInput(loaderId) {
+    // Fungsi Add Hauler diperbaiki untuk mendukung loading data tersimpan
+    function addHaulerInput(loaderId, initialVal = '') {
         const list = document.getElementById(`hauler-list-${loaderId}`);
         const div = document.createElement('div');
         div.className = 'hauler-item';
-        div.innerHTML = `<span>DT</span><input type="text" class="haul-val-${loaderId}" placeholder="nomer DT">`;
+        div.innerHTML = `<span>DT</span><input type="text" class="haul-val-${loaderId}" value="${initialVal}" placeholder="nomer DT">`;
         list.appendChild(div);
-        div.querySelector('input').focus();
+        if(!initialVal) div.querySelector('input').focus();
     }
 
     function updateRitasiHours() {
@@ -313,7 +302,7 @@
                         <span style="white-space:nowrap">•${hourLabel} =</span>
                         <input type="number" class="rit-val-${i}" data-hour="${hourLabel}">
                         <span style="font-size:10px">Ret</span>
-                        <input type="text" class="rit-ket-${i}" placeholder="ket" class="ket">
+                        <input type="text" class="rit-ket-${i}" placeholder="ket">
                     </div>
                 `;
             });
@@ -321,21 +310,19 @@
         loadSavedData();
     }
 
-    function addUnitInput(type) {
+    // Fungsi Add Unit diperbaiki untuk mendukung loading data tersimpan
+    function addUnitInput(type, val1 = '', val2 = '') {
+        const list = document.getElementById(type === 'stby' ? 'stby-list' : 'bd-list');
+        const div = document.createElement('div');
+        div.className = 'unit-row';
         if (type === 'stby') {
-            const list = document.getElementById('stby-list');
-            const div = document.createElement('div');
-            div.className = 'unit-row';
-            div.innerHTML = `<input type="text" class="stby-item" placeholder="Unit" onkeydown="checkEnter(event, 'stby')">
-                             <input type="text" class="stby-ket" placeholder="Ket">`;
+            div.innerHTML = `<input type="text" class="stby-item" value="${val1}" placeholder="Unit (Misal DT5678)" onkeydown="checkEnter(event, 'stby')">
+                             <input type="text" class="stby-ket" value="${val2}" placeholder="Ket">`;
             list.appendChild(div);
-            div.querySelector('.stby-item').focus();
+            if(!val1) div.querySelector('.stby-item').focus();
         } else {
-            const list = document.getElementById('bd-list');
-            const div = document.createElement('div');
-            div.className = 'unit-row';
-            div.innerHTML = `<input type="text" class="bd-unit" placeholder="Unit">
-                             <input type="text" class="bd-loc" placeholder="Pit">`;
+            div.innerHTML = `<input type="text" class="bd-unit" value="${val1}" placeholder="Unit (Misal HD 4551)">
+                             <input type="text" class="bd-loc" value="${val2}" placeholder="Pit">`;
             list.appendChild(div);
         }
     }
@@ -422,21 +409,92 @@
         setTimeout(() => { alertBox.remove(); }, 2000);
     }
 
+    // REVISI: Fungsi saveData diperkuat untuk merekam data ritasi, hauler, stby, dan bd
     function saveData() {
-        const data = {};
-        document.querySelectorAll('input, select').forEach(el => { 
-            if (el.id) data[el.id] = el.value; 
+        const data = {
+            basics: {},
+            loaders: [],
+            stby: [],
+            bd: []
+        };
+        
+        // Simpan inputan dasar yang punya ID
+        document.querySelectorAll('input[id], select[id]').forEach(el => { 
+            data.basics[el.id] = el.value; 
         });
-        localStorage.setItem('ritasiData', JSON.stringify(data));
+
+        // Simpan Data Ritasi & Hauler per EX
+        for (let i = 1; i <= 6; i++) {
+            const loaderEntry = { rit: [], ket: [], haulers: [] };
+            document.querySelectorAll(`.rit-val-${i}`).forEach(el => loaderEntry.rit.push(el.value));
+            document.querySelectorAll(`.rit-ket-${i}`).forEach(el => loaderEntry.ket.push(el.value));
+            document.querySelectorAll(`.haul-val-${i}`).forEach(el => loaderEntry.haulers.push(el.value));
+            data.loaders.push(loaderEntry);
+        }
+
+        // Simpan Stby
+        document.querySelectorAll('#stby-list .unit-row').forEach(row => {
+            data.stby.push({ u: row.querySelector('.stby-item').value, k: row.querySelector('.stby-ket').value });
+        });
+
+        // Simpan BD
+        document.querySelectorAll('#bd-list .unit-row').forEach(row => {
+            data.bd.push({ u: row.querySelector('.bd-unit').value, l: row.querySelector('.bd-loc').value });
+        });
+
+        localStorage.setItem('ritasiData_vPro', JSON.stringify(data));
     }
 
+    // REVISI: Fungsi loadSavedData diperkuat untuk menampilkan kembali semua data tersimpan
     function loadSavedData() {
-        const data = JSON.parse(localStorage.getItem('ritasiData'));
-        if (!data) return;
-        Object.keys(data).forEach(key => {
-            const el = document.getElementById(key);
-            if (el) el.value = data[key];
-        });
+        const data = JSON.parse(localStorage.getItem('ritasiData_vPro'));
+        if (!data) {
+            // Jika kosong, berikan satu baris input kosong default
+            addUnitInput('stby');
+            addUnitInput('bd');
+            for(let i=1; i<=6; i++) addHaulerInput(i);
+            return;
+        }
+
+        // Restore input dasar
+        if(data.basics) {
+            Object.keys(data.basics).forEach(key => {
+                const el = document.getElementById(key);
+                if (el) el.value = data.basics[key];
+            });
+        }
+
+        // Restore Loader Details (Hauler & Ritasi)
+        if(data.loaders) {
+            data.loaders.forEach((ld, i) => {
+                const exIdx = i + 1;
+                const haulerListDiv = document.getElementById(`hauler-list-${exIdx}`);
+                haulerListDiv.innerHTML = ''; // Bersihkan
+                
+                if(ld.haulers.length > 0) {
+                    ld.haulers.forEach(h => addHaulerInput(exIdx, h));
+                } else {
+                    addHaulerInput(exIdx);
+                }
+
+                const ritVals = document.querySelectorAll(`.rit-val-${exIdx}`);
+                const ritKets = document.querySelectorAll(`.rit-ket-${exIdx}`);
+                ld.rit.forEach((v, idx) => { if(ritVals[idx]) ritVals[idx].value = v; });
+                ld.ket.forEach((k, idx) => { if (ritKets[idx]) ritKets[idx].value = k; });
+            });
+        }
+
+        // Restore Stby & BD
+        document.getElementById('stby-list').innerHTML = '';
+        document.getElementById('bd-list').innerHTML = '';
+        
+        if(data.stby && data.stby.length > 0) {
+            data.stby.forEach(item => addUnitInput('stby', item.u, item.k));
+        } else { addUnitInput('stby'); }
+
+        if(data.bd && data.bd.length > 0) {
+            data.bd.forEach(item => addUnitInput('bd', item.u, item.l));
+        } else { addUnitInput('bd'); }
     }
 
     function resetForm() {
@@ -456,7 +514,7 @@
     }
 
     function executeReset() {
-        localStorage.removeItem('ritasiData');
+        localStorage.removeItem('ritasiData_vPro');
         location.reload();
     }
 
@@ -464,7 +522,9 @@
     window.onload = () => {
         initLoaders();
         const today = new Date().toISOString().split('T')[0];
-        document.getElementById('tanggal').value = today;
+        if(!document.getElementById('tanggal').value) {
+            document.getElementById('tanggal').value = today;
+        }
     };
 </script>
 
