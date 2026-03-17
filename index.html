@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Ritasi Pama TCM</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="manifest" href="manifest.json">
     <style>
         :root {
             --primary: #2c3e50;
@@ -25,6 +28,15 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
+
+        /* STYLING LOGO BARU */
+        .header-logo {
+            display: block;
+            margin: 0 auto 10px auto;
+            max-height: 80px;
+            width: auto;
+        }
+
         h2 { text-align: center; color: var(--primary); margin-bottom: 5px; }
         .sub-title { text-align: center; font-size: 0.9em; color: #666; margin-bottom: 20px; }
         
@@ -159,6 +171,8 @@
 <body>
 
 <div class="container">
+    <img src="logo.png" alt="Logo Pama" class="header-logo">
+    
     <h2>Laporan Ritasi Pama TCM</h2>
     <p class="sub-title">Inputer Laporan by WhatsApp </p>
 
@@ -397,7 +411,6 @@
         document.execCommand("copy");
         document.body.removeChild(dummy);
 
-        // REVISI: Menggunakan notifikasi custom agar tidak muncul "localhost menyatakan"
         showCustomAlert("Laporan berhasil disalin!, Silahkan Tempel di Whatsapp");
     }
 
@@ -426,7 +439,6 @@
         });
     }
 
-    // FUNGSI RESET YANG BARU (Tanpa mengubah style/detail lain)
     function resetForm() {
         const confirmBox = document.createElement("div");
         confirmBox.className = "custom-alert";
