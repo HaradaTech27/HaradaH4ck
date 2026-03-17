@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Ritasi Pama TCM</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- HANYA TAMBAHAN LOGO DI SINI --- */
+        .header-logo-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background-color: white; 
+            padding: 10px 0;
+            border-bottom: 3px solid #f1c40f;
+        }
+        .header-logo {
+            max-height: 80px;
+            width: auto;
+        }
+        /* --- BATAS TAMBAHAN LOGO --- */
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            margin-top: 20px;
+            background-color: #34495e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #f1c40f;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #bdc3c7;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #7f8c8d;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            box-sizing: border-box;
+        }
+
+        button.btn-input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .btn-input-plus {
+            background-color: #f1c40f;
+            color: #2c3e50;
+        }
+
+        .btn-input-minus {
+            background-color: #c0392b;
+        }
+
+        .rit-count {
+            font-size: 32px;
+            font-weight: bold;
+            color: #f1c40f;
+            margin: 10px 0;
+        }
+
+        button.btn-submit {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #27ae60;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-logo-container">
+        <img src="logo.png" alt="Logo PAMA" class="header-logo">
+    </div>
+
+    <div class="container">
+        <h2>Laporan Ritasi Pama TCM</h2>
+        
+        <div class="input-group">
+            <label for="id_rit">ID Ritasi:</label>
+            <input type="text" id="id_rit" placeholder="Masukkan ID">
+        </div>
+
+        <div class="input-group">
+            <label for="fleet">Nama Fleet:</label>
+            <input type="text" id="fleet" placeholder="Masukkan Fleet">
+        </div>
+
+        <div class="input-group">
+            <label for="shift">Shift:</label>
+            <select id="shift">
+                <option value="1">Shift 1</option>
+                <option value="2">Shift 2</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Jumlah Rit:</label>
+            <div class="rit-count" id="rit_count">0</div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-input btn-input-minus" onclick="changeRit(-1)">- RIT</button>
+                <button class="btn-input btn-input-plus" onclick="changeRit(1)">+ RIT</button>
+            </div>
+        </div>
+
+        <button class="btn-submit" onclick="submitRitasi()">SIMPAN DATA (OFFLINE)</button>
+    </div>
+
+    <script>
+        let ritCount = 0;
+        const ritCountDisplay = document.getElementById('rit_count');
+
+        function changeRit(amount) {
+            ritCount += amount;
+            if (ritCount < 0) ritCount = 0;
+            ritCountDisplay.innerText = ritCount;
+        }
+
+        function submitRitasi() {
+            const idRit = document.getElementById('id_rit').value;
+            const fleet = document.getElementById('fleet').value;
+            const shift = document.getElementById('shift').value;
+
+            if (idRit === '' || fleet === '') {
+                alert('ID Ritasi dan Nama Fleet wajib diisi!');
+                return;
+            }
+
+            const ritData = {
+                id: idRit,
+                fleet: fleet,
+                shift: shift,
+                jumlah_rit: ritCount,
+                timestamp: new Date().toLocaleString()
+            };
+
+            let storedRitasi = JSON.parse(localStorage.getItem('ritasiData')) || [];
+            storedRitasi.push(ritData);
+            localStorage.setItem('ritasiData', JSON.stringify(storedRitasi));
+
+            alert(`Data untuk ${fleet} berhasil disimpan offline!\nSegera cari sinyal untuk upload ke server.`);
+            
+            document.getElementById('id_rit').value = '';
+            document.getElementById('fleet').value = '';
+            ritCount = 0;
+            ritCountDisplay.innerText = 0;
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/HaradaH4ck/sw.js')
+            .then(reg => console.log('Service Worker terdaftar'))
+            .catch(err => console.log('Service Worker gagal terdaftar'));
+        }
+    </script>
+</body>
+</html>
