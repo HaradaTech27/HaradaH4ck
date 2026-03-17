@@ -4,199 +4,457 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Ritasi Pama TCM</title>
-    <link rel="icon" href="logo.png" type="image/png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <link rel="manifest" href="manifest.json">
     <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #f39c12;
+            --bg: #f4f7f6;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
             margin: 0;
-            padding: 0;
-            background-color: #2c3e50;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 20px;
+            color: #333;
         }
-
-        /* --- HANYA TAMBAHAN LOGO DI SINI --- */
-        .header-logo-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            background-color: white; 
-            padding: 10px 0;
-            border-bottom: 3px solid #f1c40f;
-        }
-        .header-logo {
-            max-height: 80px;
-            width: auto;
-        }
-        /* --- BATAS TAMBAHAN LOGO --- */
-
         .container {
-            width: 90%;
-            max-width: 500px;
-            margin-top: 20px;
-            background-color: #34495e;
+            max-width: 600px;
+            margin: auto;
+            background: white;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-
-        h2 {
-            margin-top: 0;
-            color: #f1c40f;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #bdc3c7;
-        }
-
-        input[type="text"], input[type="number"], select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #7f8c8d;
-            background-color: #ecf0f1;
-            color: #2c3e50;
-            box-sizing: border-box;
-        }
-
-        button.btn-input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .btn-input-plus {
-            background-color: #f1c40f;
-            color: #2c3e50;
-        }
-
-        .btn-input-minus {
-            background-color: #c0392b;
-        }
-
-        .rit-count {
-            font-size: 32px;
-            font-weight: bold;
-            color: #f1c40f;
-            margin: 10px 0;
-        }
-
-        button.btn-submit {
-            width: 100%;
+        h2 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+        .sub-title { text-align: center; font-size: 0.9em; color: #666; margin-bottom: 20px; }
+        
+        .section {
+            border: 1px solid #ddd;
             padding: 15px;
-            margin-top: 20px;
             border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            background-color: #27ae60;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+        label { display: block; font-weight: bold; margin-top: 10px; font-size: 0.9em; }
+        input, select, textarea {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        input::placeholder { color: #bbb; font-style: italic; }
+        
+        .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .flex-1 { flex: 1; }
+
+        .loader-card {
+            background: #fdfdfd;
+            border-left: 5px solid var(--accent);
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .ritasi-grid {
+            display: grid;
+            grid-template-columns: 1fr; 
+            gap: 5px;
+            margin-top: 15px;
+        }
+        .ritasi-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.8em;
+            background: #eee;
+            padding: 8px;
+            border-radius: 4px;
+            gap: 5px;
+        }
+        .ritasi-item input { margin: 0; padding: 5px; width: 50px; }
+        .ritasi-item .ket { flex: 1; min-width: 50px; font-style: italic; }
+
+        .btn-mini {
+            background: #27ae60;
             color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-add {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .btn-copy {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .btn-reset {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.7em;
+            color: #888;
+            margin-top: 30px;
+        }
+
+        .unit-row { display: flex; gap: 5px; margin-bottom: 5px; align-items: center; }
+        .unit-row input:first-child { flex: 2; } 
+        .unit-row input:last-child { flex: 1; width: 80px; } 
+
+        .input-suffix { font-size: 0.8em; font-weight: bold; color: #555; white-space: nowrap; }
+        
+        .hauler-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; align-items: center; }
+        .hauler-item { display: flex; align-items: center; gap: 2px; background: #f0f0f0; padding: 2px 5px; border-radius: 4px; border: 1px solid #ccc; }
+        .hauler-item input { margin: 0; padding: 3px; width: 80px; border: none; background: transparent; }
+
+        /* Notifikasi Custom Style */
+        .custom-alert {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 10000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: fadeInOut 2s ease-in-out forwards;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; bottom: 30px; }
+            20% { opacity: 1; bottom: 50px; }
+            80% { opacity: 1; bottom: 50px; }
+            100% { opacity: 0; bottom: 30px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="header-logo-container">
-        <img src="logo.png" alt="Logo PAMA" class="header-logo">
-    </div>
+<div class="container">
+    <h2>Laporan Ritasi Pama TCM</h2>
+    <p class="sub-title">Inputer Laporan by WhatsApp </p>
 
-    <div class="container">
-        <h2>Laporan Ritasi Pama TCM</h2>
+    <div class="section">
+        <label>Lokasi</label>
+        <input type="text" id="blok" placeholder="Misal B20 Barat" style="width:100%">
         
-        <div class="input-group">
-            <label for="id_rit">ID Ritasi:</label>
-            <input type="text" id="id_rit" placeholder="Masukkan ID">
-        </div>
-
-        <div class="input-group">
-            <label for="fleet">Nama Fleet:</label>
-            <input type="text" id="fleet" placeholder="Masukkan Fleet">
-        </div>
-
-        <div class="input-group">
-            <label for="shift">Shift:</label>
-            <select id="shift">
-                <option value="1">Shift 1</option>
-                <option value="2">Shift 2</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label>Jumlah Rit:</label>
-            <div class="rit-count" id="rit_count">0</div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn-input btn-input-minus" onclick="changeRit(-1)">- RIT</button>
-                <button class="btn-input btn-input-plus" onclick="changeRit(1)">+ RIT</button>
+        <div class="row">
+            <div class="flex-1">
+                <label>Shift</label>
+                <select id="shift" onchange="updateRitasiHours()" style="width:100%">
+                    <option value="S1">Shift 1 pola 3 Shift</option>
+                    <option value="S2">Shift 2 pola 3 Shift</option>
+                    <option value="S3">Shift 3</option>
+                    <option value="LS1">Longshift 1</option>
+                    <option value="LS2">Longshift 2</option>
+                </select>
+            </div>
+            <div class="flex-1">
+                <label>Tanggal</label>
+                <input type="date" id="tanggal" style="width:100%">
             </div>
         </div>
-
-        <button class="btn-submit" onclick="submitRitasi()">SIMPAN DATA (OFFLINE)</button>
     </div>
 
-    <script>
-        let ritCount = 0;
-        const ritCountDisplay = document.getElementById('rit_count');
+    <div id="loader-container"></div>
 
-        function changeRit(amount) {
-            ritCount += amount;
-            if (ritCount < 0) ritCount = 0;
-            ritCountDisplay.innerText = ritCount;
+    <div class="section">
+        <label>Unit Stby :</label>
+        <div id="stby-list">
+            <div class="unit-row">
+                <input type="text" class="stby-item" placeholder="Unit (Misal DT5678)" onkeydown="checkEnter(event, 'stby')">
+                <input type="text" class="stby-ket" placeholder="Ket">
+            </div>
+        </div>
+        <button class="btn-add" onclick="addUnitInput('stby')">+ Tambah Unit</button>
+    </div>
+
+    <div class="section">
+        <label>Unit Breakdown :</label>
+        <div id="bd-list">
+            <div class="unit-row">
+                <input type="text" class="bd-unit" placeholder="Unit (Misal HD 4551)">
+                <input type="text" class="bd-loc" placeholder="Pit">
+            </div>
+        </div>
+        <button class="btn-add" onclick="addUnitInput('bd')">+ Tambah Unit</button>
+    </div>
+
+    <button class="btn-copy" onclick="copyToWA()">SALIN KE WHATSAPP</button>
+    <button class="btn-reset" onclick="resetForm()">RESET INPUTER</button>
+
+    <div class="footer">by :Harada</div>
+</div>
+
+<script>
+    const shiftHours = {
+        'S1': [7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+        'S2': [15, 16, 17, 18, 19, 20, 21, 22, 23, 0],
+        'S3': [23, 0, 1, 2, 3, 4, 5, 6, 7, 8],
+        'LS1': [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+        'LS2': [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+    };
+
+    function initLoaders() {
+        const container = document.getElementById('loader-container');
+        container.innerHTML = '';
+        for (let i = 1; i <= 6; i++) {
+            const div = document.createElement('div');
+            div.className = 'section loader-card';
+            div.innerHTML = `
+                <div class="row">
+                    <div class="row">
+                        <label style="margin:0">EX</label>
+                        <input type="text" id="ex-${i}" placeholder="Misal 1810" style="width:100px">
+                    </div>
+                    <div class="flex-1">
+                        <input type="text" id="opr-${i}" placeholder="nama operator" style="width:100%">
+                    </div>
+                </div>
+                <input type="text" id="loc-${i}" placeholder="Lokasi PC Misal IB 3000 " style="width:100%; margin-top:10px">
+                <input type="text" id="cat-${i}" placeholder="Kategori Misal LL;LH" style="width:100%">
+                
+                <div class="row" style="margin-top:5px">
+                    <input type="text" id="jarak-${i}" placeholder="Jarak" style="flex:1">
+                    <span class="input-suffix">KM</span>
+                </div>
+
+                <div style="margin-top:5px">
+                    <input type="text" id="disp-${i}" placeholder="Lokasi Disposal Misal B16" style="width:100%">
+                </div>
+
+                <div id="hauler-section-${i}" style="margin-top:10px">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:0.8em; font-weight:bold;">List Hauler:</span>
+                        <button class="btn-mini" onclick="addHaulerInput(${i})">+</button>
+                    </div>
+                    <div id="hauler-list-${i}" class="hauler-list">
+                        <div class="hauler-item">
+                            <span>DT</span>
+                            <input type="text" class="haul-val-${i}" placeholder="nomer DT">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top:10px">
+                    <label style="margin:0; font-size:0.8em">Start Loading:</label>
+                    <input type="time" id="sl-${i}" style="width:100%">
+                </div>
+
+                <div class="ritasi-grid" id="ritasi-grid-${i}"></div>
+                <hr style="border:0; border-top:1px dashed #ccc; margin-top:15px">
+            `;
+            container.appendChild(div);
         }
+        updateRitasiHours();
+    }
 
-        function submitRitasi() {
-            const idRit = document.getElementById('id_rit').value;
-            const fleet = document.getElementById('fleet').value;
-            const shift = document.getElementById('shift').value;
+    function addHaulerInput(loaderId) {
+        const list = document.getElementById(`hauler-list-${loaderId}`);
+        const div = document.createElement('div');
+        div.className = 'hauler-item';
+        div.innerHTML = `<span>DT</span><input type="text" class="haul-val-${loaderId}" placeholder="nomer DT">`;
+        list.appendChild(div);
+        div.querySelector('input').focus();
+    }
 
-            if (idRit === '' || fleet === '') {
-                alert('ID Ritasi dan Nama Fleet wajib diisi!');
-                return;
-            }
+    function updateRitasiHours() {
+        const shift = document.getElementById('shift').value;
+        const hours = shiftHours[shift];
+        for (let i = 1; i <= 6; i++) {
+            const grid = document.getElementById(`ritasi-grid-${i}`);
+            grid.innerHTML = '';
+            hours.forEach(h => {
+                const hourLabel = h < 10 ? '0' + h : h;
+                grid.innerHTML += `
+                    <div class="ritasi-item">
+                        <span style="white-space:nowrap">•${hourLabel} =</span>
+                        <input type="number" class="rit-val-${i}" data-hour="${hourLabel}">
+                        <span style="font-size:10px">Ret</span>
+                        <input type="text" class="rit-ket-${i}" placeholder="ket" class="ket">
+                    </div>
+                `;
+            });
+        }
+        loadSavedData();
+    }
 
-            const ritData = {
-                id: idRit,
-                fleet: fleet,
-                shift: shift,
-                jumlah_rit: ritCount,
-                timestamp: new Date().toLocaleString()
-            };
+    function addUnitInput(type) {
+        if (type === 'stby') {
+            const list = document.getElementById('stby-list');
+            const div = document.createElement('div');
+            div.className = 'unit-row';
+            div.innerHTML = `<input type="text" class="stby-item" placeholder="Unit" onkeydown="checkEnter(event, 'stby')">
+                             <input type="text" class="stby-ket" placeholder="Ket">`;
+            list.appendChild(div);
+            div.querySelector('.stby-item').focus();
+        } else {
+            const list = document.getElementById('bd-list');
+            const div = document.createElement('div');
+            div.className = 'unit-row';
+            div.innerHTML = `<input type="text" class="bd-unit" placeholder="Unit">
+                             <input type="text" class="bd-loc" placeholder="Pit">`;
+            list.appendChild(div);
+        }
+    }
 
-            let storedRitasi = JSON.parse(localStorage.getItem('ritasiData')) || [];
-            storedRitasi.push(ritData);
-            localStorage.setItem('ritasiData', JSON.stringify(storedRitasi));
+    function checkEnter(e, type) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addUnitInput(type);
+        }
+    }
 
-            alert(`Data untuk ${fleet} berhasil disimpan offline!\nSegera cari sinyal untuk upload ke server.`);
+    function copyToWA() {
+        const blok = document.getElementById('blok').value.toUpperCase();
+        const shiftText = document.getElementById('shift').options[document.getElementById('shift').selectedIndex].text.toUpperCase();
+        const tglInput = document.getElementById('tanggal').value;
+        const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+        const tglFormatted = tglInput ? new Date(tglInput).toLocaleDateString('id-ID', options) : '-';
+
+        let text = `*SEMANGAT PAGI!!!*\n`;
+        text += `*Laporan Retasi ${blok}*\n`;
+        text += `*${shiftText}*\n`;
+        text += `*${tglFormatted}*\n\n`;
+
+        for (let i = 1; i <= 6; i++) {
+            const ex = document.getElementById(`ex-${i}`).value;
+            const opr = document.getElementById(`opr-${i}`).value;
+            if (!ex) continue;
+
+            const haulInputs = document.querySelectorAll(`.haul-val-${i}`);
+            let haulersList = [];
+            haulInputs.forEach(inp => { if(inp.value) haulersList.push(inp.value); });
+            const totalHaul = haulersList.length;
+
+            text += `______________________\n\n`;
+            text += `*EX ${ex}* 👷‍♂️ *${opr}*\n\n`;
+            text += `•${document.getElementById(`loc-${i}`).value}, ${document.getElementById(`cat-${i}`).value}\n`;
+            text += `•Jarak  : ${document.getElementById(`jarak-${i}`).value} KM\n`;
+            text += `•DUMP   : ${document.getElementById(`disp-${i}`).value}\n`;
+            text += `•${totalHaul}x HD (${haulersList.join(', ')})\n`;
+            text += `•SL: ${document.getElementById(`sl-${i}`).value}\n\n`;
+
+            const vals = document.querySelectorAll(`.rit-val-${i}`);
+            const kets = document.querySelectorAll(`.rit-ket-${i}`);
             
-            document.getElementById('id_rit').value = '';
-            document.getElementById('fleet').value = '';
-            ritCount = 0;
-            ritCountDisplay.innerText = 0;
+            vals.forEach((v, idx) => {
+                const hour = v.getAttribute('data-hour');
+                const rit = v.value || ''; 
+                if (!rit) return; 
+
+                const ket = kets[idx].value ? ` (_${kets[idx].value}_)` : '';
+                text += `•${hour} = ${rit} Ret${ket}\n`;
+            });
         }
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/HaradaH4ck/sw.js')
-            .then(reg => console.log('Service Worker terdaftar'))
-            .catch(err => console.log('Service Worker gagal terdaftar'));
-        }
-    </script>
+        text += `\n______________________\n\nUnit Stby :\n`;
+        document.querySelectorAll('#stby-list .unit-row').forEach(row => {
+            const unit = row.querySelector('.stby-item')?.value;
+            const ket = row.querySelector('.stby-ket')?.value;
+            if(unit) text += `•${unit}${ket ? '/' + ket : ''}\n`;
+        });
+
+        text += `\n______________________\n\nUnit Breakdown :\n`;
+        document.querySelectorAll('#bd-list .unit-row').forEach(row => {
+            const unit = row.querySelector('.bd-unit').value;
+            const loc = row.querySelector('.bd-loc').value;
+            if(unit) text += `•${unit}${loc ? '(' + loc + ')' : ''}\n`;
+        });
+
+        const dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+
+        // REVISI: Menggunakan notifikasi custom agar tidak muncul "localhost menyatakan"
+        showCustomAlert("Laporan berhasil disalin!, Silahkan Tempel di Whatsapp");
+    }
+
+    function showCustomAlert(msg) {
+        const alertBox = document.createElement("div");
+        alertBox.className = "custom-alert";
+        alertBox.innerText = msg;
+        document.body.appendChild(alertBox);
+        setTimeout(() => { alertBox.remove(); }, 2000);
+    }
+
+    function saveData() {
+        const data = {};
+        document.querySelectorAll('input, select').forEach(el => { 
+            if (el.id) data[el.id] = el.value; 
+        });
+        localStorage.setItem('ritasiData', JSON.stringify(data));
+    }
+
+    function loadSavedData() {
+        const data = JSON.parse(localStorage.getItem('ritasiData'));
+        if (!data) return;
+        Object.keys(data).forEach(key => {
+            const el = document.getElementById(key);
+            if (el) el.value = data[key];
+        });
+    }
+
+    // FUNGSI RESET YANG BARU (Tanpa mengubah style/detail lain)
+    function resetForm() {
+        const confirmBox = document.createElement("div");
+        confirmBox.className = "custom-alert";
+        confirmBox.style.animation = "none";
+        confirmBox.style.bottom = "50%";
+        confirmBox.style.transform = "translate(-50%, 50%)";
+        confirmBox.innerHTML = `
+            <div style="margin-bottom: 15px; font-size: 16px;">Hapus semua inputan?</div>
+            <div style="display: flex; justify-content: center; gap: 10px;">
+                <button onclick="executeReset()" style="background:#e74c3c; color:white; border:none; padding:8px 20px; border-radius:5px; cursor:pointer; font-weight:bold;">Ya</button>
+                <button onclick="this.closest('.custom-alert').remove()" style="background:#95a5a6; color:white; border:none; padding:8px 20px; border-radius:5px; cursor:pointer; font-weight:bold;">Batal</button>
+            </div>
+        `;
+        document.body.appendChild(confirmBox);
+    }
+
+    function executeReset() {
+        localStorage.removeItem('ritasiData');
+        location.reload();
+    }
+
+    window.addEventListener('input', saveData);
+    window.onload = () => {
+        initLoaders();
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('tanggal').value = today;
+    };
+</script>
+
 </body>
 </html>
